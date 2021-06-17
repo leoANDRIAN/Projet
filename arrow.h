@@ -4,10 +4,16 @@ class Arrow : public Form
 {
 private:
 	// Liste des variables
-	float weight, size;
+	double weight, size;
 public:
 	// Liste des fonctions
-	Arrow(float w, float s);
+	Arrow(double w, double s);
+    double getWeight() const { return weight; }
+    void setWeight(double w) { weight = w; }
+    double getSize() const { return size; }
+    void setSize(double s) { size = s; }
+    void update(double delta_t);
+    void render();
 };
 
 

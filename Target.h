@@ -4,9 +4,13 @@ class Target : public Form
 {
 private:
 	// Liste des variables
-	float radius;
+	double radius;
 public:
 	// Liste des fonctions
-	Target(float r);
+	Target(double r);
+	double getRadius() const { return radius; }
+	void setRadius(double r) { radius = r; }
+	void update(double delta_t);
+	void render();
 };
 

@@ -16,7 +16,7 @@ const int SCREEN_WIDTH = 640;
 const int SCREEN_HEIGHT = 480;
 
 // Max number of forms : static allocation
-const int MAX_FORMS_NUMBER = 10;
+const int MAX_FORMS_NUMBER = 30;
 
 // Animation actualization delay (in ms) => 100 updates per second
 const Uint32 ANIM_DELAY = 10;
@@ -275,12 +275,17 @@ int main(int argc, char* args[])
         Sphere* s1 = NULL;
         s1 = new Sphere(0.1, Point(2, 0, 0), RED);
         forms_list[number_of_forms] = s1;
+        number_of_forms++;*/
+
+        Target* t = NULL;
+        t = new Target(1);
+        forms_list[number_of_forms] = t;
         number_of_forms++;
 
-        Sphere* s2 = NULL;
-        s2 = new Sphere(0.1, Point(0, 1.5, 0), RED);
-        forms_list[number_of_forms] = s2;
-        number_of_forms++;*/
+        Arrow* a = NULL;
+        a = new Arrow(100, 2);
+        forms_list[number_of_forms] = a;
+        number_of_forms++;
 
         // Get first "current time"
         previous_time = SDL_GetTicks();
