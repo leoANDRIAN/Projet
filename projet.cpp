@@ -3,10 +3,12 @@
 #include <gl/glut.h>
 #include "geometry.h"
 #include "forms.h"
+#include "arrow.h"
+#include "Target.h"
 #include <SDL.h>
 
 
-/*******************************************************************s********/
+/***************************************************************************/
 /* Constants and functions declarations                                    */
 /***************************************************************************/
 // Screen dimension constants
@@ -30,7 +32,7 @@ bool initGL();
 void update(Form* formlist[MAX_FORMS_NUMBER], double delta_t);
 
 // Renders scene to the screen
-void render(Form* formlist[MAX_FORMS_NUMBER], const Point& cam_pos);
+void render(Form* formlist[MAX_FORMS_NUMBER], const Point& cam_pos, int angleVue);
 
 // Frees media and shuts down SDL
 void close(SDL_Window** window);
@@ -268,7 +270,7 @@ int main(int argc, char* args[])
         /*Cube_face *pFace = NULL;
         pFace = new Cube_face(Vector(1,0,0), Vector(0,1,0), Point(0.5, 0, 0.5), 1, 1, GREEN);
         forms_list[number_of_forms] = pFace;
-        number_of_forms++;*/
+        number_of_forms++;
 
         Sphere* s1 = NULL;
         s1 = new Sphere(0.1, Point(2, 0, 0), RED);
@@ -278,7 +280,7 @@ int main(int argc, char* args[])
         Sphere* s2 = NULL;
         s2 = new Sphere(0.1, Point(0, 1.5, 0), RED);
         forms_list[number_of_forms] = s2;
-        number_of_forms++;
+        number_of_forms++;*/
 
         // Get first "current time"
         previous_time = SDL_GetTicks();
