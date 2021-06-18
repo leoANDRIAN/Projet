@@ -20,7 +20,7 @@ public:
 
 
 
-/*
+
 // A particular Form
 class Sphere : public Form
 {
@@ -37,7 +37,7 @@ public:
 };
 
 
-// A face of a cube
+/* A face of a cube
 class Cube_face : public Form
 {
 private:
