@@ -268,7 +268,7 @@ int main(int argc, char* args[])
         // Create here specific forms and add them to the list...
         // Don't forget to update the actual number_of_forms !
         /*Cube_face *pFace = NULL;
-        pFace = new Cube_face(Vector(1,0,0), Vector(0,1,0), Point(0.5, 0, 0.5), 1, 1, GREEN);
+        pFace = new Cube_face(Vector(1,0,0), Vector(0,3,0), Point(0.5, 0, 0.5), 1, 1, GREEN);
         forms_list[number_of_forms] = pFace;
         number_of_forms++;
 
@@ -281,11 +281,13 @@ int main(int argc, char* args[])
         t = new Target(1);
         forms_list[number_of_forms] = t;
         number_of_forms++;
+        t->getAnim().setPos(Point(1.0, 1.0, -1.0));
 
         Arrow* a = NULL;
         a = new Arrow(100, 2);
         forms_list[number_of_forms] = a;
         number_of_forms++;
+        a->getAnim().setPos(Point(1.0, 1.0, 2.0));
 
         // Get first "current time"
         previous_time = SDL_GetTicks();

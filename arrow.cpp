@@ -11,7 +11,9 @@ Arrow::Arrow(double w, double s)
 
 void Arrow::update(double delta_t)
 {
-
+    if (this->getAnim().getPos().z > -1) {
+        this->getAnim().setPos(Point(this->getAnim().getPos().x, this->getAnim().getPos().y, this->getAnim().getPos().z - 0.07));
+    }
 }
 
 
@@ -31,6 +33,9 @@ void Arrow::render()
     glColor4f(0.54, 0.35, 0., 0);
     gluCylinder(quad, 0.01, 0.01, this->size, 100, 100);
     gluDeleteQuadric(quad);
+
+    //Point org = this->getAnim().getPos();
+    //glTranslated(org.x, org.y, org.z);
 }
 
 
