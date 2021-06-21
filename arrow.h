@@ -8,6 +8,7 @@ private:
     Vector move;
 public:
     bool canMove;
+    bool onCible = false;
 	// Liste des fonctions
 	Arrow(double w, double s);
     Arrow(double w, double s, Vector mov);
@@ -31,8 +32,9 @@ private:
     // The sphere center is aligned with the coordinate system origin
     // => no center required here, information is stored in the anim object
     double radius;
-    Vector move;
 public:
+    Vector move;
+    double masse;
     Sphere(double r = 1.0, Point org = Point(), Color cl = Color());
     Sphere(Vector vec, double r = 1.0, Point org = Point(), Color cl = Color());
     double getRadius() const { return radius; }

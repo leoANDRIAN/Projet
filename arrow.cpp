@@ -2,6 +2,7 @@
 #include<gl/glut.h>
 #include<SDL.h>
 #include "arrow.h"
+using namespace std;
 
 Arrow::Arrow(double w, double s, Vector mov)
 {
@@ -89,10 +90,11 @@ Sphere::Sphere(Vector vec, double r, Point org, Color cl)
     col = cl;
 }
 
-void Sphere::update(double delta_t)
-{
-    // Movement
-    Point newP = Point(anim.getPos().x + move.x, anim.getPos().y + move.y, anim.getPos().z + move.z);
+void Sphere::update(double delta_t) {
+    anim.setSpeed(anim.getSpeed() + delta_t * anim.getAccel());
+    Vector newVec = delta_t * anim.getSpeed();
+    Point newP = Point(anim.getPos().x + newVec.x, anim.getPos().y + newVec.y, anim.getPos().z + newVec.z);
+    // cout << newP << endl;
     anim.setPos(newP);
 }
 
