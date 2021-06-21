@@ -5,11 +5,27 @@
 
 Target::Target(double r) {
 	radius = r;
+    moveLeft = true;
 }
 
 void Target::update(double delta_t)
 {
-    
+    if (moveLeft) {
+        if (this->getAnim().getPos().x > -7) {
+            this->getAnim().setPos(Point(this->getAnim().getPos().x - 0.1, this->getAnim().getPos().y, this->getAnim().getPos().z));
+        }
+        else {
+            moveLeft = false;
+        }
+    }
+    else {
+        if (this->getAnim().getPos().x < 7) {
+            this->getAnim().setPos(Point(this->getAnim().getPos().x + 0.1, this->getAnim().getPos().y, this->getAnim().getPos().z));
+        }
+        else {
+            moveLeft = true;
+        }
+    }
 }
 
 

@@ -302,19 +302,21 @@ int main(int argc, char* args[])
         s1 = new Sphere(0.1, Point(0, 0, 2), YELLOW);
         forms_list[number_of_forms] = s1;
         number_of_forms++;
-        s1 = new Sphere(0.1, Point(0, 0, -2), ORANGE);
+        /*s1 = new Sphere(0.1, Point(0, 0, -2), ORANGE);
         forms_list[number_of_forms] = s1;
-        number_of_forms++;
+        number_of_forms++;*/
 
         Target* t = NULL;
         t = new Target(1);
         forms_list[number_of_forms] = t;
         number_of_forms++;
+        t->getAnim().setPos(Point(0.0, 1.0, -20.0));
 
         Arrow* a = NULL;
         a = new Arrow(100, 2);
         forms_list[number_of_forms] = a;
         number_of_forms++;
+        a->getAnim().setPos(Point(0.0, 1.0, 0.0));
 
         // Get first "current time"
         previous_time = SDL_GetTicks();
