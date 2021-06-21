@@ -7,7 +7,7 @@ Arrow::Arrow(double w, double s, Vector mov)
 {
     weight = w;
     size = s;
-    move = mov;
+    anim.setSpeed(mov);
 }
 
 Arrow::Arrow(double w, double s)
@@ -20,11 +20,20 @@ void Arrow::update(double delta_t)
 {
     if (canMove) {
         // Movement
-        Point newP = Point(anim.getPos().x + move.x, anim.getPos().y + move.y, anim.getPos().z + move.z);
+        Point newP = Point(anim.getPos().x + anim.getSpeed().x, anim.getPos().y + anim.getSpeed().y, anim.getPos().z + anim.getSpeed().z);
         anim.setPos(newP);
+        // Check fleche dans salle
         if (newP.x > 25 || newP.x < -25 || newP.y > 5 || newP.y < -4 || newP.z > 25 || newP.z < -25) {
             canMove = false;
         }
+        // Check si fleche a touché la cible
+        if (newP.x == 40000) {
+            canMove = false;
+            onCible = true;
+        }
+    }
+    else if (onCible) {
+
     }
 }
 
