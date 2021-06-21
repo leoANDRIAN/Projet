@@ -3,6 +3,13 @@
 #include<SDL.h>
 #include "arrow.h"
 
+Arrow::Arrow(double w, double s, Vector mov)
+{
+    weight = w;
+    size = s;
+    move = mov;
+}
+
 Arrow::Arrow(double w, double s)
 {
     weight = w;
@@ -11,7 +18,14 @@ Arrow::Arrow(double w, double s)
 
 void Arrow::update(double delta_t)
 {
-
+    if (canMove) {
+        // Movement
+        Point newP = Point(anim.getPos().x + move.x, anim.getPos().y + move.y, anim.getPos().z + move.z);
+        anim.setPos(newP);
+        if (newP.x > 25 || newP.x < -25 || newP.y > 5 || newP.y < -4 || newP.z > 25 || newP.z < -25) {
+            canMove = false;
+        }
+    }
 }
 
 
@@ -55,10 +69,19 @@ Sphere::Sphere(double r, Point org, Color cl)
     col = cl;
 }
 
+Sphere::Sphere(Vector vec, double r, Point org, Color cl)
+{
+    move = vec;
+    anim.setPos(org);
+    radius = r;
+    col = cl;
+}
 
 void Sphere::update(double delta_t)
 {
-    // this.getAnim().phi = delta_t;
+    // Movement
+    Point newP = Point(anim.getPos().x + move.x, anim.getPos().y + move.y, anim.getPos().z + move.z);
+    anim.setPos(newP);
 }
 
 

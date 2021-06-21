@@ -271,7 +271,7 @@ int main(int argc, char* args[])
         // Main loop flag
         bool quit = false;
         Uint32 current_time, previous_time, elapsed_time;
-
+        int ptrLastArrow;
         // Event handler
         SDL_Event event;
 
@@ -343,6 +343,13 @@ int main(int argc, char* args[])
                         quit = true;
                         break;
                     case SDLK_q:
+                        /*s1 = new Sphere(regard, 0.3, Point(0, 0, 0), WHITE);
+                        forms_list[number_of_forms] = s1;
+                        ptrLastArrow = number_of_forms;
+                        number_of_forms++;*/
+                        a = new Arrow(100, 2, regard);
+                        forms_list[number_of_forms] = a;
+                        number_of_forms++;
                         break;
                     case SDLK_d:
                         break;
