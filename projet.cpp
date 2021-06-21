@@ -6,7 +6,7 @@
 #include "arrow.h"
 #include "Target.h"
 #include <SDL.h>
-
+#include <Windows.h>
 
 /***************************************************************************/
 /* Constants and functions declarations                                    */
@@ -173,7 +173,7 @@ void update(Form* formlist[MAX_FORMS_NUMBER], double delta_t)
     }
 }
 
-void render(Form* formlist[MAX_FORMS_NUMBER], const Point& cam_pos, int angleVue)
+void render(Form* formlist[MAX_FORMS_NUMBER], Vector vec)
 {
     // Clear color buffer and Z-Buffer
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -183,10 +183,10 @@ void render(Form* formlist[MAX_FORMS_NUMBER], const Point& cam_pos, int angleVue
     glLoadIdentity();
 
     // Set the camera position and parameters
-    gluLookAt(cam_pos.x, cam_pos.y, cam_pos.z, 0.0, 0.0, 0.0, 0.0, 1.0, 0.0);
+    gluLookAt(0, 0, 0, vec.x, vec.y, vec.z, 0.0, 1.0, 0.0);
     // Isometric view
-    glRotated(angleVue, 0, 1, 0);
-    glRotated(30, 1, 0, -1);
+    // glRotated(angleVue, 0, 1, 0);
+    // glRotated(30, 1, 0, -1);
 
     // X, Y and Z axis
     glPushMatrix(); // Preserve the camera viewing point for further forms
@@ -227,6 +227,22 @@ void close(SDL_Window** window)
     SDL_Quit();
 }
 
+void updateRegard(float& angleVert, float& angleHor, Vector& vec, float mouseSpeed) {
+    POINT p;
+    GetCursorPos(&p);
+    angleHor += mouseSpeed * float(600 - p.x);
+    angleVert += mouseSpeed * float(300 - p.y);
+    if (angleVert < -1.40) {
+        angleVert = -1.40;
+    }
+    else if (angleVert > 1.40) {
+        angleVert = 1.40;
+    }
+    vec.x = cos(angleVert) * sin(angleHor);
+    vec.y = sin(angleVert);
+    vec.z = cos(angleVert) * cos(angleHor);
+    SetCursorPos(600, 300);
+}
 
 /***************************************************************************/
 /* MAIN Function                                                           */
@@ -238,8 +254,12 @@ int main(int argc, char* args[])
 
     // OpenGL context
     SDL_GLContext gContext;
-    int angleVue = -45;
-    int hVue = 1;
+    // int angleVue = -45;
+    // int hVue = 1;
+    float horizontalAngle = 3.14f;
+    float verticalAngle = 0.0f;
+    float mouseSpeed = 0.005f;
+    Vector regard = Vector(0, 0, 1);
 
     // Start up SDL and create window
     if (!init(&gWindow, &gContext))
@@ -265,17 +285,26 @@ int main(int argc, char* args[])
         {
             forms_list[i] = NULL;
         }
-        // Create here specific forms and add them to the list...
-        // Don't forget to update the actual number_of_forms !
-        /*Cube_face *pFace = NULL;
-        pFace = new Cube_face(Vector(1,0,0), Vector(0,3,0), Point(0.5, 0, 0.5), 1, 1, GREEN);
-        forms_list[number_of_forms] = pFace;
-        number_of_forms++;
 
         Sphere* s1 = NULL;
         s1 = new Sphere(0.1, Point(2, 0, 0), RED);
         forms_list[number_of_forms] = s1;
-        number_of_forms++;*/
+        number_of_forms++;
+        s1 = new Sphere(0.1, Point(-2, 0, 0), GREEN);
+        forms_list[number_of_forms] = s1;
+        number_of_forms++;
+        s1 = new Sphere(0.1, Point(0, 1, 0), BLUE);
+        forms_list[number_of_forms] = s1;
+        number_of_forms++;
+        s1 = new Sphere(0.1, Point(0, -1, 0), WHITE);
+        forms_list[number_of_forms] = s1;
+        number_of_forms++;
+        s1 = new Sphere(0.1, Point(0, 0, 2), YELLOW);
+        forms_list[number_of_forms] = s1;
+        number_of_forms++;
+        s1 = new Sphere(0.1, Point(0, 0, -2), ORANGE);
+        forms_list[number_of_forms] = s1;
+        number_of_forms++;
 
         Target* t = NULL;
         t = new Target(1);
@@ -312,26 +341,23 @@ int main(int argc, char* args[])
 
                     switch (key_pressed)
                     {
-                        // Quit the program when 'q' or Escape keys are pressed
-                    case SDLK_q:
                     case SDLK_ESCAPE:
                         quit = true;
                         break;
-                    case SDLK_o:
-                        angleVue += 2;
+                    case SDLK_q:
                         break;
-                    case SDLK_p:
-                        angleVue -= 2;
+                    case SDLK_d:
                         break;
                     case SDLK_z:
-                        camera_position.y += 2;
                         break;
                     case SDLK_s:
-                        camera_position.y -= 2;
                         break;
                     default:
                         break;
                     }
+                    break;
+                case SDL_MOUSEMOTION:
+                    updateRegard(verticalAngle, horizontalAngle, regard, mouseSpeed);
                     break;
                 default:
                     break;
@@ -348,7 +374,7 @@ int main(int argc, char* args[])
             }
 
             // Render the scene
-            render(forms_list, camera_position, angleVue);
+            render(forms_list, regard);
 
             // Update window screen
             SDL_GL_SwapWindow(gWindow);

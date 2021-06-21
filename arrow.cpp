@@ -52,7 +52,7 @@ void Arrow::render()
 
 
 
-/*
+
 Sphere::Sphere(double r, Point org, Color cl)
 {
     anim.setPos(org);
@@ -81,7 +81,7 @@ void Sphere::render()
 }
 
 
-Cube_face::Cube_face(Vector v1, Vector v2, Point org, double l, double w, Color cl)
+/*Cube_face::Cube_face(Vector v1, Vector v2, Point org, double l, double w, Color cl)
 {
     vdir1 = 1.0 / v1.norm() * v1;
     vdir2 = 1.0 / v2.norm() * v2;
