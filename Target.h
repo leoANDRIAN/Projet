@@ -5,6 +5,7 @@ class Target : public Form
 private:
 	// Liste des variables
 	double radius;
+	bool moveLeft;
 public:
 	// Liste des fonctions
 	Target(double r);
