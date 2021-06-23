@@ -1,5 +1,6 @@
 #pragma once
 #include "forms.h"
+#include "Target.h"
 class Arrow : public Form
 {
 private:
@@ -7,8 +8,9 @@ private:
 	double weight, size;
     Vector move;
 public:
-    bool canMove;
+    bool canMove = true;
     bool onCible = false;
+    double oldProdVec;
 	// Liste des fonctions
 	Arrow(double w, double s);
     Arrow(double w, double s, Vector mov);
@@ -17,6 +19,7 @@ public:
     double getSize() const { return size; }
     void setSize(double s) { size = s; }
     void update(double delta_t);
+    void update2(double delta_t, Target *cible);
     void render();
 };
 

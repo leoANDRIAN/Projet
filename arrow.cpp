@@ -2,6 +2,8 @@
 #include<gl/glut.h>
 #include<SDL.h>
 #include "arrow.h"
+#include "Target.h"
+
 using namespace std;
 
 Arrow::Arrow(double w, double s, Vector mov)
@@ -17,7 +19,11 @@ Arrow::Arrow(double w, double s)
     size = s;
 }
 
-void Arrow::update(double delta_t)
+void Arrow::update(double delta_t) {
+    // Implantation
+}
+
+void Arrow::update2(double delta_t, Target *cible)
 {
     if (this->canMove) {
         // Movement
@@ -26,17 +32,25 @@ void Arrow::update(double delta_t)
         Point newP = Point(anim.getPos().x + newVec.x, anim.getPos().y + newVec.y, anim.getPos().z + newVec.z);
         anim.setPos(newP);
         // Check fleche dans salle
-        if (newP.x > 25 || newP.x < -25 || newP.y > 5 || newP.y < -4 || newP.z > 25 || newP.z < -25) {
+        if (newP.x > 40 || newP.x < -40 || newP.y > 5 || newP.y < -4 || newP.z > 40 || newP.z < -40) {
             canMove = false;
         }
         // Check si fleche a touché la cible
-        if (newP.x == 40000) {
+        Vector normal((cible->v1 ^ cible->v2));
+        Vector v(anim.getPos(), cible->getAnim().getPos()); // Vecteur pointe / centre cible
+        double prodVec = (v * normal) / (v.norm() * normal.norm());
+        if (((prodVec < 0 && oldProdVec > 0) || (prodVec > 0 && oldProdVec < 0)) && (v.norm() <= cible->getRadius())) {
             canMove = false;
             onCible = true;
         }
     }
-    else if (onCible) {
-
+    else if (onCible && !cible->pause) {
+        if (cible->moveLeft) {
+            this->getAnim().setPos(Point(this->getAnim().getPos().x - 0.1, this->getAnim().getPos().y, this->getAnim().getPos().z));
+        }
+        else {
+            this->getAnim().setPos(Point(this->getAnim().getPos().x + 0.1, this->getAnim().getPos().y, this->getAnim().getPos().z));
+        }
     }
 }
 
