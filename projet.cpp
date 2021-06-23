@@ -6,7 +6,10 @@
 #include "arrow.h"
 #include "Target.h"
 #include <SDL.h>
+#include <SDL_image.h>
+#include <SDL_opengl.h>
 #include <Windows.h>
+#include <stdio.h>
 
 /***************************************************************************/
 /* Constants and functions declarations                                    */
@@ -278,6 +281,41 @@ int main(int argc, char* args[])
         // Camera position
         Point camera_position(0, 0.0, 5.0);
 
+        // Texture //////////////////////////////////////////////////////////
+        GLuint textureid_1;
+        // Le fichier devant servir de texture. A mettre dans le dossier du projet
+        SDL_Surface* imgsurf = IMG_Load("earth_texture.jpg");
+        if (imgsurf == NULL) {
+            printf("Failed to load texture image!\n");
+        }
+        // work out what format to tell glTexImage2D to use...
+        int mode;
+        if (imgsurf->format->BytesPerPixel == 3) { // RGB 24bit
+            mode = GL_RGB;
+        }
+        else if (imgsurf->format->BytesPerPixel == 4) { // RGBA 32bit
+            mode = GL_RGBA;
+        }
+        else {
+            SDL_FreeSurface(imgsurf);
+            return 0;
+        }
+        // create one texture name
+        glGenTextures(1, &textureid_1);
+
+        // tell opengl to use the generated texture name
+        glBindTexture(GL_TEXTURE_2D, textureid_1);
+
+        // this reads from the sdl imgsurf and puts it into an opengl texture
+        glTexImage2D(GL_TEXTURE_2D, 0, mode, imgsurf->w, imgsurf->h, 0, mode, GL_UNSIGNED_BYTE, imgsurf->pixels);
+
+        // these affect how this texture is drawn later on...
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+        // clean up
+        SDL_FreeSurface(imgsurf);
+
         // The forms to render
         Form* forms_list[MAX_FORMS_NUMBER];
         unsigned short number_of_forms = 0, i;
@@ -308,6 +346,7 @@ int main(int argc, char* args[])
 
         Target* t = NULL;
         t = new Target(1);
+        t->setTexture(textureid_1);
         forms_list[number_of_forms] = t;
         number_of_forms++;
         t->getAnim().setPos(Point(0.0, 1.0, -20.0));

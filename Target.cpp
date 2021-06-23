@@ -42,5 +42,12 @@ void Target::render()
     gluDisk(quad, this->radius/4, this->radius/2, 100, 100);
     glColor4f(1., 0., 0., 0);
     gluDisk(quad, 0, this->radius/4, 100, 100);
+
+    glEnable(GL_TEXTURE_2D);
+    glBindTexture(GL_TEXTURE_2D, texture_id);
+    gluQuadricTexture(quad, texture_id);
+    gluQuadricNormals(quad, GLU_SMOOTH);
+
     gluDeleteQuadric(quad);
+    glDisable(GL_TEXTURE_2D);
 }

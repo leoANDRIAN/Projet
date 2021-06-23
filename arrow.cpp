@@ -70,12 +70,21 @@ void Sphere::update(double delta_t)
 void Sphere::render()
 {
     GLUquadric* quad;
-
     quad = gluNewQuadric();
 
-    Form::render();
+    // Complete this part
+    Form::render(); // Position the form and assign its color
 
-    gluSphere(quad, this->getRadius(), 20, 20);
+    // Mise en route de la texture associee
+    glEnable(GL_TEXTURE_2D);
+    glBindTexture(GL_TEXTURE_2D, texture_id);
+    gluQuadricTexture(quad, texture_id);
+    gluQuadricNormals(quad, GLU_SMOOTH);
+
+    gluSphere(quad, radius, 20, 20);
 
     gluDeleteQuadric(quad);
+
+    // Ne plus appliquer la texture pour la suite
+    glDisable(GL_TEXTURE_2D);
 }
