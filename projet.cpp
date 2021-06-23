@@ -5,18 +5,21 @@
 #include "forms.h"
 #include "arrow.h"
 #include "Target.h"
+#include "wind.h"
 #include <SDL.h>
 #include <SDL_image.h>
 #include <SDL_opengl.h>
 #include <Windows.h>
 #include <stdio.h>
+#include <stdlib.h>
+#include <time.h>
 
 /***************************************************************************/
 /* Constants and functions declarations                                    */
 /***************************************************************************/
 // Screen dimension constants
-const int SCREEN_WIDTH = 640;
-const int SCREEN_HEIGHT = 480;
+const int SCREEN_WIDTH = 1024;
+const int SCREEN_HEIGHT = 768;
 
 // Max number of forms : static allocation
 const int MAX_FORMS_NUMBER = 30;
@@ -257,6 +260,19 @@ int main(int argc, char* args[])
 
     // OpenGL context
     SDL_GLContext gContext;
+
+    // initialize random seed
+    srand(time(NULL));
+
+    // generate number between 1 and 10
+    int windSpeed = rand() % 10 + 1;
+
+    bool windDirection = true;
+    if (rand() % 2 == 0) {
+        windDirection = false;
+        windSpeed = -windSpeed;
+    }
+
     // int angleVue = -45;
     // int hVue = 1;
     float horizontalAngle = 3.14f;
@@ -264,7 +280,7 @@ int main(int argc, char* args[])
     float mouseSpeed = 0.005f;
     Vector regard = Vector(0, 0, 1);
     Vector speed1 = Vector(5, 2, 0);
-    Vector acc1 = Vector(0, -10, 0);
+    Vector acc1 = Vector(windSpeed, -10, 0);
 
     // Start up SDL and create window
     if (!init(&gWindow, &gContext))
@@ -318,6 +334,8 @@ int main(int argc, char* args[])
         // clean up
         SDL_FreeSurface(imgsurf);
 
+        // Texture //////////////////////////////////////////////////////////
+
         // The forms to render
         Form* forms_list[MAX_FORMS_NUMBER];
         unsigned short number_of_forms = 0, i;
@@ -342,22 +360,26 @@ int main(int argc, char* args[])
         s1 = new Sphere(0.1, Point(0, 0, 2), YELLOW);
         forms_list[number_of_forms] = s1;
         number_of_forms++;
-        s1 = new Sphere(0.1, Point(0, 0, -2), ORANGE);
+        /*s1 = new Sphere(0.1, Point(0, 0, -2), ORANGE);
         forms_list[number_of_forms] = s1;
-        number_of_forms++;
+        number_of_forms++;*/
 
-        /*Target* t = NULL;
+        Target* t = NULL;
         t = new Target(1);
-        t->setTexture(textureid_1);
         forms_list[number_of_forms] = t;
         number_of_forms++;
-        t->getAnim().setPos(Point(0.0, 1.0, -20.0));*/
+        t->getAnim().setPos(Point(0.0, 1.0, -25.0));
 
         Arrow* a = NULL;
         /*a = new Arrow(100, 2);
         forms_list[number_of_forms] = a;
         number_of_forms++;
         a->getAnim().setPos(Point(0.0, 1.0, 0.0));*/
+
+        Wind* w = NULL;
+        w = new Wind(windDirection, abs(windSpeed));
+        forms_list[number_of_forms] = w;
+        number_of_forms++;
 
         // Get first "current time"
         previous_time = SDL_GetTicks();

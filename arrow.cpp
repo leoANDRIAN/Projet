@@ -19,7 +19,7 @@ Arrow::Arrow(double w, double s)
 
 void Arrow::update(double delta_t)
 {
-    if (canMove) {
+    if (this->canMove) {
         // Movement
         anim.setSpeed(anim.getSpeed() + delta_t * anim.getAccel());
         Vector newVec = delta_t * anim.getSpeed();
