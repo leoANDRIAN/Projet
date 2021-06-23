@@ -10,7 +10,7 @@ Target::Target(double r) {
 
 void Target::update(double delta_t)
 {
-    /*if (moveLeft) {
+    if (moveLeft) {
         if (this->getAnim().getPos().x > -7) {
             this->getAnim().setPos(Point(this->getAnim().getPos().x - 0.1, this->getAnim().getPos().y, this->getAnim().getPos().z));
         }
@@ -25,7 +25,7 @@ void Target::update(double delta_t)
         else {
             moveLeft = true;
         }
-    }*/
+    }
 }
 
 
