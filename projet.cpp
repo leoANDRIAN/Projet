@@ -263,6 +263,8 @@ int main(int argc, char* args[])
     float verticalAngle = 0.0f;
     float mouseSpeed = 0.005f;
     Vector regard = Vector(0, 0, 1);
+    Vector speed1 = Vector(5, 2, 0);
+    Vector acc1 = Vector(0, -10, 0);
 
     // Start up SDL and create window
     if (!init(&gWindow, &gContext))
@@ -274,7 +276,7 @@ int main(int argc, char* args[])
         // Main loop flag
         bool quit = false;
         Uint32 current_time, previous_time, elapsed_time;
-
+        int ptrLastArrow;
         // Event handler
         SDL_Event event;
 
@@ -325,10 +327,10 @@ int main(int argc, char* args[])
         }
 
         Sphere* s1 = NULL;
-        s1 = new Sphere(0.1, Point(2, 0, 0), RED);
+        s1 = new Sphere(0.1, Point(1, 0, 0), RED);
         forms_list[number_of_forms] = s1;
         number_of_forms++;
-        s1 = new Sphere(0.1, Point(-2, 0, 0), GREEN);
+        s1 = new Sphere(0.1, Point(1, 1, 0), GREEN);
         forms_list[number_of_forms] = s1;
         number_of_forms++;
         s1 = new Sphere(0.1, Point(0, 1, 0), BLUE);
@@ -340,22 +342,22 @@ int main(int argc, char* args[])
         s1 = new Sphere(0.1, Point(0, 0, 2), YELLOW);
         forms_list[number_of_forms] = s1;
         number_of_forms++;
-        /*s1 = new Sphere(0.1, Point(0, 0, -2), ORANGE);
+        s1 = new Sphere(0.1, Point(0, 0, -2), ORANGE);
         forms_list[number_of_forms] = s1;
-        number_of_forms++;*/
+        number_of_forms++;
 
-        Target* t = NULL;
+        /*Target* t = NULL;
         t = new Target(1);
         t->setTexture(textureid_1);
         forms_list[number_of_forms] = t;
         number_of_forms++;
-        t->getAnim().setPos(Point(0.0, 1.0, -20.0));
+        t->getAnim().setPos(Point(0.0, 1.0, -20.0));*/
 
         Arrow* a = NULL;
-        a = new Arrow(100, 2);
+        /*a = new Arrow(100, 2);
         forms_list[number_of_forms] = a;
         number_of_forms++;
-        a->getAnim().setPos(Point(0.0, 1.0, 0.0));
+        a->getAnim().setPos(Point(0.0, 1.0, 0.0));*/
 
         // Get first "current time"
         previous_time = SDL_GetTicks();
@@ -384,6 +386,11 @@ int main(int argc, char* args[])
                         quit = true;
                         break;
                     case SDLK_q:
+                        a = new Arrow(100, 2, regard);
+                        a->getAnim().setSpeed(30 * regard);
+                        a->getAnim().setAccel(acc1);
+                        forms_list[number_of_forms] = a;
+                        number_of_forms++;
                         break;
                     case SDLK_d:
                         break;

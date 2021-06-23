@@ -2,6 +2,14 @@
 #include<gl/glut.h>
 #include<SDL.h>
 #include "arrow.h"
+using namespace std;
+
+Arrow::Arrow(double w, double s, Vector mov)
+{
+    weight = w;
+    size = s;
+    anim.setSpeed(mov);
+}
 
 Arrow::Arrow(double w, double s)
 {
@@ -11,8 +19,24 @@ Arrow::Arrow(double w, double s)
 
 void Arrow::update(double delta_t)
 {
-    if (this->getAnim().getPos().z > -20) {
-        this->getAnim().setPos(Point(this->getAnim().getPos().x, this->getAnim().getPos().y, this->getAnim().getPos().z - 0.07));
+    if (canMove) {
+        // Movement
+        anim.setSpeed(anim.getSpeed() + delta_t * anim.getAccel());
+        Vector newVec = delta_t * anim.getSpeed();
+        Point newP = Point(anim.getPos().x + newVec.x, anim.getPos().y + newVec.y, anim.getPos().z + newVec.z);
+        anim.setPos(newP);
+        // Check fleche dans salle
+        if (newP.x > 25 || newP.x < -25 || newP.y > 5 || newP.y < -4 || newP.z > 25 || newP.z < -25) {
+            canMove = false;
+        }
+        // Check si fleche a touché la cible
+        if (newP.x == 40000) {
+            canMove = false;
+            onCible = true;
+        }
+    }
+    else if (onCible) {
+
     }
 }
 
@@ -60,10 +84,20 @@ Sphere::Sphere(double r, Point org, Color cl)
     col = cl;
 }
 
-
-void Sphere::update(double delta_t)
+Sphere::Sphere(Vector vec, double r, Point org, Color cl)
 {
-    // this.getAnim().phi = delta_t;
+    move = vec;
+    anim.setPos(org);
+    radius = r;
+    col = cl;
+}
+
+void Sphere::update(double delta_t) {
+    anim.setSpeed(anim.getSpeed() + delta_t * anim.getAccel());
+    Vector newVec = delta_t * anim.getSpeed();
+    Point newP = Point(anim.getPos().x + newVec.x, anim.getPos().y + newVec.y, anim.getPos().z + newVec.z);
+    // cout << newP << endl;
+    anim.setPos(newP);
 }
 
 

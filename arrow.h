@@ -5,9 +5,13 @@ class Arrow : public Form
 private:
 	// Liste des variables
 	double weight, size;
+    Vector move;
 public:
+    bool canMove;
+    bool onCible = false;
 	// Liste des fonctions
 	Arrow(double w, double s);
+    Arrow(double w, double s, Vector mov);
     double getWeight() const { return weight; }
     void setWeight(double w) { weight = w; }
     double getSize() const { return size; }
@@ -30,7 +34,10 @@ private:
     double radius;
     GLuint texture_id;
 public:
+    Vector move;
+    double masse;
     Sphere(double r = 1.0, Point org = Point(), Color cl = Color());
+    Sphere(Vector vec, double r = 1.0, Point org = Point(), Color cl = Color());
     double getRadius() const { return radius; }
     void setRadius(double r) { radius = r; }
     void setTexture(GLuint textureid) { texture_id = textureid; }
