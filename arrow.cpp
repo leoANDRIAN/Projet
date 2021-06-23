@@ -21,7 +21,9 @@ void Arrow::update(double delta_t)
 {
     if (canMove) {
         // Movement
-        Point newP = Point(anim.getPos().x + anim.getSpeed().x, anim.getPos().y + anim.getSpeed().y, anim.getPos().z + anim.getSpeed().z);
+        anim.setSpeed(anim.getSpeed() + delta_t * anim.getAccel());
+        Vector newVec = delta_t * anim.getSpeed();
+        Point newP = Point(anim.getPos().x + newVec.x, anim.getPos().y + newVec.y, anim.getPos().z + newVec.z);
         anim.setPos(newP);
         // Check fleche dans salle
         if (newP.x > 25 || newP.x < -25 || newP.y > 5 || newP.y < -4 || newP.z > 25 || newP.z < -25) {

@@ -312,10 +312,10 @@ int main(int argc, char* args[])
         t = new Target(1);
         forms_list[number_of_forms] = t;
         number_of_forms++;
-        t->getAnim().setPos(Point(0.0, 1.0, -20.0));
+        t->getAnim().setPos(Point(0.0, 1.0, -20.0));*/
 
         Arrow* a = NULL;
-        a = new Arrow(100, 2);
+        /*a = new Arrow(100, 2);
         forms_list[number_of_forms] = a;
         number_of_forms++;
         a->getAnim().setPos(Point(0.0, 1.0, 0.0));*/
@@ -347,14 +347,11 @@ int main(int argc, char* args[])
                         quit = true;
                         break;
                     case SDLK_q:
-                        s1 = new Sphere(0.3, Point(0, 0, 0), WHITE);
-                        s1->getAnim().setSpeed(15*regard);
-                        s1->getAnim().setAccel(acc1);
-                        forms_list[number_of_forms] = s1;
-                        number_of_forms++;
-                        /*a = new Arrow(100, 2, regard);
+                        a = new Arrow(100, 2, regard);
+                        a->getAnim().setSpeed(30 * regard);
+                        a->getAnim().setAccel(acc1);
                         forms_list[number_of_forms] = a;
-                        number_of_forms++;*/
+                        number_of_forms++;
                         break;
                     case SDLK_d:
                         break;
