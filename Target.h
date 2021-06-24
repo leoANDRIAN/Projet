@@ -17,5 +17,6 @@ public:
 	void setRadius(double r) { radius = r; }
 	void update(double delta_t);
 	void render();
+	Vector getNormal();
 };
 
