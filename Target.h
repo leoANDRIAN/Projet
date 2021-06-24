@@ -19,5 +19,6 @@ public:
 	void setTexture(GLuint textureid) { texture_id = textureid; }
 	void update(double delta_t);
 	void render();
+	Vector getNormal();
 };
 

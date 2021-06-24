@@ -29,6 +29,10 @@ void Target::update(double delta_t)
 }
 
 
+Vector Target::getNormal() {
+    return (v1 ^ v2);
+}
+
 void Target::render()
 {
     GLUquadric* quad;

@@ -11,15 +11,15 @@ public:
     bool canMove = true;
     bool onCible = false;
     double oldProdVec;
+    Target* target;
 	// Liste des fonctions
 	Arrow(double w, double s);
-    Arrow(double w, double s, Vector mov);
+    Arrow(double w, double s, Vector mov, Target* cible);
     double getWeight() const { return weight; }
     void setWeight(double w) { weight = w; }
     double getSize() const { return size; }
     void setSize(double s) { size = s; }
     void update(double delta_t);
-    void update2(double delta_t, Target *cible);
     void render();
 };
 

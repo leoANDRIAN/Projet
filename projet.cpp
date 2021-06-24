@@ -14,16 +14,17 @@
 #include <stdlib.h>
 #include <time.h>
 
+using namespace std;
+
 /***************************************************************************/
 /* Constants and functions declarations                                    */
-/***************************************************************************/
+
 // Screen dimension constants
-const int SCREEN_WIDTH = 1024;
-const int SCREEN_HEIGHT = 768;
+int const SCREEN_WIDTH = 1000;
+int const SCREEN_HEIGHT = 600;
 
 // Max number of forms : static allocation
-const int MAX_FORMS_NUMBER = 30;
-const int MAX_ARROW_NUMBER = 40;
+const int MAX_FORMS_NUMBER = 50;
 
 // Animation actualization delay (in ms) => 100 updates per second
 const Uint32 ANIM_DELAY = 10;
@@ -169,7 +170,7 @@ bool initGL()
     return success;
 }
 
-void update(Target* formlist[MAX_FORMS_NUMBER], Arrow* arrowlist[MAX_ARROW_NUMBER], double delta_t)
+void update(Form* formlist[MAX_FORMS_NUMBER], double delta_t)
 {
     // Update the list of forms
     unsigned short i = 0;
@@ -179,14 +180,9 @@ void update(Target* formlist[MAX_FORMS_NUMBER], Arrow* arrowlist[MAX_ARROW_NUMBE
         i++;
     }
     i = 0;
-    while (arrowlist[i] != NULL)
-    {
-        arrowlist[i]->update2(delta_t, formlist[0]);
-        i++;
-    }
 }
 
-void render(Target* formlist[MAX_FORMS_NUMBER], Arrow* arrowlist[MAX_ARROW_NUMBER], Vector vec)
+void render(Form* formlist[MAX_FORMS_NUMBER], Vector vec)
 {
     // Clear color buffer and Z-Buffer
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -229,13 +225,6 @@ void render(Target* formlist[MAX_FORMS_NUMBER], Arrow* arrowlist[MAX_ARROW_NUMBE
         i++;
     }
     i = 0;
-    while (arrowlist[i] != NULL)
-    {
-        glPushMatrix(); // Preserve the camera viewing point for further forms
-        arrowlist[i]->render();
-        glPopMatrix(); // Restore the camera viewing point for next object
-        i++;
-    }
 }
 
 void close(SDL_Window** window)
@@ -248,21 +237,22 @@ void close(SDL_Window** window)
     SDL_Quit();
 }
 
-void updateRegard(float& angleVert, float& angleHor, Vector& vec, float mouseSpeed) {
-    POINT p;
-    GetCursorPos(&p);
-    angleHor += mouseSpeed * float(600 - p.x);
-    angleVert += mouseSpeed * float(300 - p.y);
-    if (angleVert < -1.40) {
-        angleVert = -1.40;
+void updateRegard(float& angleVert, float& angleHor, Vector& vec, float mouseSpeed, int x, int y, SDL_Window* win) {
+    angleHor += mouseSpeed * float(SCREEN_WIDTH/2 - x);
+    angleVert += mouseSpeed * float(SCREEN_HEIGHT/2 - y);
+    cout << angleHor << endl;
+    cout << angleVert << endl;
+   if (angleVert < -1) {
+        angleVert = -1;
     }
-    else if (angleVert > 1.40) {
-        angleVert = 1.40;
+    else if (angleVert > 1) {
+        angleVert = 1;
     }
     vec.x = cos(angleVert) * sin(angleHor);
     vec.y = sin(angleVert);
     vec.z = cos(angleVert) * cos(angleHor);
-    SetCursorPos(600, 300);
+    SDL_WarpMouseInWindow(win, SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2);
+    // SetCursorPos(600, 300);
 }
 
 /***************************************************************************/
@@ -275,6 +265,7 @@ int main(int argc, char* args[])
 
     // OpenGL context
     SDL_GLContext gContext;
+<<<<<<< HEAD
 
     // initialize random seed
     srand(time(NULL));
@@ -293,7 +284,7 @@ int main(int argc, char* args[])
     float horizontalAngle = 3.14f;
     float verticalAngle = 0.0f;
     float mouseSpeed = 0.005f;
-    Vector regard = Vector(0, 0, 1);
+    Vector regard = Vector(0, 0, -1);
     Vector speed1 = Vector(5, 2, 0);
     Vector acc1 = Vector(windSpeed, -10, 0);
 
@@ -307,13 +298,13 @@ int main(int argc, char* args[])
         // Main loop flag
         bool quit = false;
         Uint32 current_time, previous_time, elapsed_time;
-        int ptrLastArrow;
         // Event handler
         SDL_Event event;
 
         // Camera position
-        Point camera_position(0, 0.0, 5.0);
+        // Point camera_position(0, 0.0, 5.0);
 
+<<<<<<< HEAD
         // Texture //////////////////////////////////////////////////////////
         GLuint textureid_1;
         // Le fichier devant servir de texture. A mettre dans le dossier du projet
@@ -350,19 +341,12 @@ int main(int argc, char* args[])
         SDL_FreeSurface(imgsurf);
 
         // Texture //////////////////////////////////////////////////////////
-
         // The forms to render
-        Target* forms_list[MAX_FORMS_NUMBER];
-        Arrow* fleche_list[MAX_ARROW_NUMBER];
-        unsigned short number_of_forms = 0, number_of_arrows = 0, i;
-
+        Form* forms_list[MAX_FORMS_NUMBER];
+        unsigned short number_of_forms = 0, i;
         for (i = 0; i < MAX_FORMS_NUMBER; i++)
         {
             forms_list[i] = NULL;
-        }
-        for (i = 0; i < MAX_ARROW_NUMBER; i++)
-        {
-            fleche_list[i] = NULL;
         }
         Target* t = NULL;
         t = new Target(1);
@@ -370,7 +354,9 @@ int main(int argc, char* args[])
         number_of_forms++;
         t->getAnim().setPos(Point(0.0, 1.0, -20.0));
 
-        /*Sphere* s1 = NULL;
+        // Si besoin de s'orienter pour debug :
+
+        Sphere* s1 = NULL;
         s1 = new Sphere(0.1, Point(2, 0, 0), RED);
         forms_list[number_of_forms] = s1;
         number_of_forms++;
@@ -388,7 +374,8 @@ int main(int argc, char* args[])
         number_of_forms++;
         s1 = new Sphere(0.1, Point(0, 0, -2), ORANGE);
         forms_list[number_of_forms] = s1;
-        number_of_forms++;*/
+        number_of_forms++;
+
 
         Target* t = NULL;
         t = new Target(1);
@@ -403,6 +390,7 @@ int main(int argc, char* args[])
         forms_list[number_of_forms] = w;
         number_of_forms++;
 
+        SDL_ShowCursor(SDL_DISABLE);
         // Get first "current time"
         previous_time = SDL_GetTicks();
         // While application is running
@@ -421,21 +409,17 @@ int main(int argc, char* args[])
                     quit = true;
                     break;
                 case SDL_KEYDOWN:
-                    // Handle key pressed with current mouse position
-                    SDL_GetMouseState(&x, &y);
-
                     switch (key_pressed)
                     {
                     case SDLK_ESCAPE:
                         quit = true;
                         break;
                     case SDLK_q:
-                        a = new Arrow(100, 2, regard);
+                        a = new Arrow(100, 2, regard, t);
                         a->getAnim().setSpeed(30 * regard);
                         a->getAnim().setAccel(acc1);
-                        a->oldProdVec = 2;
-                        fleche_list[number_of_arrows] = a;
-                        number_of_arrows++;
+                        forms_list[number_of_forms] = a;
+                        number_of_forms++;
                         break;
                     case SDLK_d:
                         break;
@@ -448,7 +432,8 @@ int main(int argc, char* args[])
                     }
                     break;
                 case SDL_MOUSEMOTION:
-                    updateRegard(verticalAngle, horizontalAngle, regard, mouseSpeed);
+                    SDL_GetMouseState(&x, &y);
+                    updateRegard(verticalAngle, horizontalAngle, regard, mouseSpeed, x, y, gWindow);
                     break;
                 default:
                     break;
@@ -461,11 +446,11 @@ int main(int argc, char* args[])
             if (elapsed_time > ANIM_DELAY)
             {
                 previous_time = current_time;
-                update(forms_list, fleche_list, 1e-3 * elapsed_time); // International system units : seconds
+                update(forms_list, 1e-3 * elapsed_time); // International system units : seconds
             }
 
             // Render the scene
-            render(forms_list, fleche_list, regard);
+            render(forms_list, regard);
 
             // Update window screen
             SDL_GL_SwapWindow(gWindow);

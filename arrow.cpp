@@ -6,11 +6,14 @@
 
 using namespace std;
 
-Arrow::Arrow(double w, double s, Vector mov)
+Arrow::Arrow(double w, double s, Vector mov, Target *cible)
 {
     weight = w;
     size = s;
     anim.setSpeed(mov);
+    target = cible;
+    Vector v(anim.getPos(), cible->getAnim().getPos()); // Vecteur pointe / centre cible
+    oldProdVec = (v * cible->getNormal()) / (v.norm() * cible->getNormal().norm());
 }
 
 Arrow::Arrow(double w, double s)
@@ -20,12 +23,7 @@ Arrow::Arrow(double w, double s)
 }
 
 void Arrow::update(double delta_t) {
-    // Implantation
-}
-
-void Arrow::update2(double delta_t, Target *cible)
-{
-    if (this->canMove) {
+    if (canMove) {
         // Movement
         anim.setSpeed(anim.getSpeed() + delta_t * anim.getAccel());
         Vector newVec = delta_t * anim.getSpeed();
@@ -35,17 +33,17 @@ void Arrow::update2(double delta_t, Target *cible)
         if (newP.x > 40 || newP.x < -40 || newP.y > 5 || newP.y < -4 || newP.z > 40 || newP.z < -40) {
             canMove = false;
         }
-        // Check si fleche a touché la cible
-        Vector normal((cible->v1 ^ cible->v2));
-        Vector v(anim.getPos(), cible->getAnim().getPos()); // Vecteur pointe / centre cible
-        double prodVec = (v * normal) / (v.norm() * normal.norm());
-        if (((prodVec < 0 && oldProdVec > 0) || (prodVec > 0 && oldProdVec < 0)) && (v.norm() <= cible->getRadius())) {
+        // Check si fleche a touchï¿½ la cible
+        Vector v(anim.getPos(), target->getAnim().getPos()); // Vecteur pointe / centre cible
+        double prodVec = (v * target->getNormal()) / (v.norm() * target->getNormal().norm());
+        if (((prodVec < 0 && oldProdVec > 0) || (prodVec > 0 && oldProdVec < 0)) && (v.norm() <= target->getRadius())) {
             canMove = false;
             onCible = true;
         }
+        oldProdVec = prodVec;
     }
-    else if (onCible && !cible->pause) {
-        if (cible->moveLeft) {
+    else if (onCible && !target->pause) {
+        if (target->moveLeft) {
             this->getAnim().setPos(Point(this->getAnim().getPos().x - 0.1, this->getAnim().getPos().y, this->getAnim().getPos().z));
         }
         else {
@@ -53,7 +51,6 @@ void Arrow::update2(double delta_t, Target *cible)
         }
     }
 }
-
 
 void Arrow::render()
 {
