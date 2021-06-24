@@ -30,19 +30,20 @@ void Arrow::update(double delta_t) {
         Point newP = Point(anim.getPos().x + newVec.x, anim.getPos().y + newVec.y, anim.getPos().z + newVec.z);
         anim.setPos(newP);
         // Check fleche dans salle
-        if (newP.x > 40 || newP.x < -40 || newP.y > 5 || newP.y < -4 || newP.z > 40 || newP.z < -40) {
+        if (newP.x > 15 || newP.x < -15 || newP.y > 20 || newP.y < -4 || newP.z > 5 || newP.z < -30) {
             canMove = false;
         }
         // Check si fleche a touch� la cible
         Vector v(anim.getPos(), target->getAnim().getPos()); // Vecteur pointe / centre cible
         double prodVec = (v * target->getNormal()) / (v.norm() * target->getNormal().norm());
         if (((prodVec < 0 && oldProdVec > 0) || (prodVec > 0 && oldProdVec < 0)) && (v.norm() <= target->getRadius())) {
+            target->points += 1;
             canMove = false;
             onCible = true;
         }
         oldProdVec = prodVec;
     }
-    else if (onCible && !target->pause) {
+    else if (onCible) {
         if (target->moveLeft) {
             this->getAnim().setPos(Point(this->getAnim().getPos().x - 0.1, this->getAnim().getPos().y, this->getAnim().getPos().z));
         }

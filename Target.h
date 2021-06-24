@@ -7,8 +7,8 @@ private:
 	double radius;
 	GLuint texture_id;
 public:
+	int points = 0;
 	bool moveLeft;
-	bool pause = false;
 	// Vecteurs pour calcul de la normale
 	Vector v1 = Vector(1, 0, 0);
 	Vector v2 = Vector(0, 1, 0);

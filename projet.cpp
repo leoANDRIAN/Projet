@@ -13,6 +13,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
+#include <string>
 
 using namespace std;
 
@@ -182,7 +183,7 @@ void update(Form* formlist[MAX_FORMS_NUMBER], double delta_t)
     i = 0;
 }
 
-void render(Form* formlist[MAX_FORMS_NUMBER], Vector vec)
+void render(Form* formlist[MAX_FORMS_NUMBER], Vector vec, int score)
 {
     // Clear color buffer and Z-Buffer
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -224,6 +225,39 @@ void render(Form* formlist[MAX_FORMS_NUMBER], Vector vec)
         glPopMatrix(); // Restore the camera viewing point for next object
         i++;
     }
+    ////// Vitesse //////
+    glPushMatrix();
+    auto vent = static_cast<Wind*>(formlist[1]); // J'assure que c'est du vent dans cette case du tableau
+    if (vent->direction) {
+        glTranslatef(vent->getAnim().getPos().x - 0.5, vent->getAnim().getPos().y, vent->getAnim().getPos().z);
+    }
+    else {
+        glTranslatef(vent->getAnim().getPos().x + 0.5, vent->getAnim().getPos().y, vent->getAnim().getPos().z);
+    }
+    string stri = to_string(vent->speed);
+    stri += " km/h";
+    glColor3f(1.0, 1.0, 1.0);
+    // set position to text    
+    glRasterPos2f(0.0, 1.0);
+    for (int i = 0; i < stri.length(); i++)
+    {  
+        glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, stri[i]);
+    }
+    glPopMatrix();
+    ////// Score //////
+    glPushMatrix();
+    auto cib = static_cast<Target*>(formlist[0]); // J'assure que c'est la cible dans cette case du tableau
+    glTranslatef(-1, 3.2, -10);
+    stri = "Score : ";
+    stri += to_string(cib->points);
+    glColor3f(1.0, 1.0, 1.0);
+    // set position to text    
+    glRasterPos2f(0.0, 1.0);
+    for (int i = 0; i < stri.length(); i++)
+    { 
+        glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, stri[i]);
+    }
+    glPopMatrix();
     i = 0;
 }
 
@@ -240,8 +274,6 @@ void close(SDL_Window** window)
 void updateRegard(float& angleVert, float& angleHor, Vector& vec, float mouseSpeed, int x, int y, SDL_Window* win) {
     angleHor += mouseSpeed * float(SCREEN_WIDTH/2 - x);
     angleVert += mouseSpeed * float(SCREEN_HEIGHT/2 - y);
-    cout << angleHor << endl;
-    cout << angleVert << endl;
    if (angleVert < -1) {
         angleVert = -1;
     }
@@ -252,7 +284,6 @@ void updateRegard(float& angleVert, float& angleHor, Vector& vec, float mouseSpe
     vec.y = sin(angleVert);
     vec.z = cos(angleVert) * cos(angleHor);
     SDL_WarpMouseInWindow(win, SCREEN_WIDTH / 2, SCREEN_HEIGHT / 2);
-    // SetCursorPos(600, 300);
 }
 
 /***************************************************************************/
@@ -260,27 +291,18 @@ void updateRegard(float& angleVert, float& angleHor, Vector& vec, float mouseSpe
 /***************************************************************************/
 int main(int argc, char* args[])
 {
+    glutInit(&argc, args);
     // The window we'll be rendering to
     SDL_Window* gWindow = NULL;
 
     // OpenGL context
     SDL_GLContext gContext;
-<<<<<<< HEAD
 
     // initialize random seed
     srand(time(NULL));
 
-    // generate number between 1 and 10
     int windSpeed = rand() % 10 + 1;
-
     bool windDirection = true;
-    if (rand() % 2 == 0) {
-        windDirection = false;
-        windSpeed = -windSpeed;
-    }
-
-    // int angleVue = -45;
-    // int hVue = 1;
     float horizontalAngle = 3.14f;
     float verticalAngle = 0.0f;
     float mouseSpeed = 0.005f;
@@ -300,11 +322,11 @@ int main(int argc, char* args[])
         Uint32 current_time, previous_time, elapsed_time;
         // Event handler
         SDL_Event event;
+        bool mouseClic = true;
 
         // Camera position
         // Point camera_position(0, 0.0, 5.0);
 
-<<<<<<< HEAD
         // Texture //////////////////////////////////////////////////////////
         GLuint textureid_1;
         // Le fichier devant servir de texture. A mettre dans le dossier du projet
@@ -354,41 +376,24 @@ int main(int argc, char* args[])
         number_of_forms++;
         t->getAnim().setPos(Point(0.0, 1.0, -20.0));
 
-        // Si besoin de s'orienter pour debug :
+        Wind* w = NULL;
+        w = new Wind(windDirection, abs(windSpeed));
+        forms_list[number_of_forms] = w;
+        number_of_forms++;
 
+        // Si besoin de s'orienter pour debug :
         Sphere* s1 = NULL;
         s1 = new Sphere(0.1, Point(2, 0, 0), RED);
         forms_list[number_of_forms] = s1;
         number_of_forms++;
-        s1 = new Sphere(0.1, Point(2, 1, 0), GREEN);
-        forms_list[number_of_forms] = s1;
-        number_of_forms++;
-        s1 = new Sphere(0.1, Point(0, 1, 0), BLUE);
-        forms_list[number_of_forms] = s1;
-        number_of_forms++;
-        s1 = new Sphere(0.1, Point(0, -1, 0), WHITE);
+        s1 = new Sphere(0.1, Point(-2, 0, 0), GREEN);
         forms_list[number_of_forms] = s1;
         number_of_forms++;
         s1 = new Sphere(0.1, Point(0, 0, 2), YELLOW);
         forms_list[number_of_forms] = s1;
         number_of_forms++;
-        s1 = new Sphere(0.1, Point(0, 0, -2), ORANGE);
-        forms_list[number_of_forms] = s1;
-        number_of_forms++;
-
-
-        Target* t = NULL;
-        t = new Target(1);
-        forms_list[number_of_forms] = t;
-        number_of_forms++;
-        t->getAnim().setPos(Point(0.0, 1.0, -25.0));
 
         Arrow* a = NULL;
-
-        Wind* w = NULL;
-        w = new Wind(windDirection, abs(windSpeed));
-        forms_list[number_of_forms] = w;
-        number_of_forms++;
 
         SDL_ShowCursor(SDL_DISABLE);
         // Get first "current time"
@@ -408,6 +413,14 @@ int main(int argc, char* args[])
                 case SDL_QUIT:
                     quit = true;
                     break;
+                case SDL_MOUSEBUTTONDOWN:
+                    mouseClic = true;
+                    a = new Arrow(100, 2, regard, t);
+                    a->getAnim().setSpeed(30 * regard);
+                    a->getAnim().setAccel(acc1);
+                    forms_list[number_of_forms] = a;
+                    number_of_forms++;
+                    break;
                 case SDL_KEYDOWN:
                     switch (key_pressed)
                     {
@@ -415,11 +428,6 @@ int main(int argc, char* args[])
                         quit = true;
                         break;
                     case SDLK_q:
-                        a = new Arrow(100, 2, regard, t);
-                        a->getAnim().setSpeed(30 * regard);
-                        a->getAnim().setAccel(acc1);
-                        forms_list[number_of_forms] = a;
-                        number_of_forms++;
                         break;
                     case SDLK_d:
                         break;
@@ -432,14 +440,14 @@ int main(int argc, char* args[])
                     }
                     break;
                 case SDL_MOUSEMOTION:
-                    SDL_GetMouseState(&x, &y);
-                    updateRegard(verticalAngle, horizontalAngle, regard, mouseSpeed, x, y, gWindow);
+                    
                     break;
                 default:
                     break;
                 }
+                SDL_GetMouseState(&x, &y);
+                updateRegard(verticalAngle, horizontalAngle, regard, mouseSpeed, x, y, gWindow);
             }
-
             // Update the scene
             current_time = SDL_GetTicks(); // get the elapsed time from SDL initialization (ms)
             elapsed_time = current_time - previous_time;
@@ -450,7 +458,19 @@ int main(int argc, char* args[])
             }
 
             // Render the scene
-            render(forms_list, regard);
+            render(forms_list, regard, 4);
+            if (mouseClic) {
+                windSpeed = rand() % 10 + 1;
+                windDirection = true;
+                if (rand() % 2 == 0) {
+                    windDirection = false;
+                    windSpeed = -windSpeed;
+                }
+                w->direction = windDirection;
+                w->speed = abs(windSpeed);
+                acc1.x = windSpeed;
+                mouseClic = false;
+            }
 
             // Update window screen
             SDL_GL_SwapWindow(gWindow);

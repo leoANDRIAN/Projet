@@ -3,10 +3,11 @@
 class Wind : public Form
 {
 private:
+
+public:
     // Liste des variables
     bool direction; //True : wind from left, False : wind from right
     int speed;
-public:
     // Liste des fonctions
     Wind(bool dir, int s);
     bool getDirection() const { return direction; }
