@@ -43,6 +43,7 @@ void Arrow::update(double delta_t)
 
 void Arrow::render()
 {
+    glPushMatrix();
     GLUquadric* quad;
     quad = gluNewQuadric();
     Form::render();
@@ -57,6 +58,8 @@ void Arrow::render()
     glColor4f(0.54, 0.35, 0., 0);
     gluCylinder(quad, 0.01, 0.01, this->size, 100, 100);
     gluDeleteQuadric(quad);
+    glColor4f(1,1,1, 0);
+    glPopMatrix();
 
     //Point org = this->getAnim().getPos();
     //glTranslated(org.x, org.y, org.z);

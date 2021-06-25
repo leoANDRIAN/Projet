@@ -6,6 +6,8 @@
 #include "arrow.h"
 #include "Target.h"
 #include "wind.h"
+#include "wall.h"
+#include "speedIndicator.h"
 #include <SDL.h>
 #include <SDL_image.h>
 #include <SDL_opengl.h>
@@ -26,6 +28,8 @@ const int MAX_FORMS_NUMBER = 30;
 
 // Animation actualization delay (in ms) => 100 updates per second
 const Uint32 ANIM_DELAY = 10;
+
+GLuint TexIDSkyBox[7];
 
 
 // Starts up SDL, creates window, and initializes OpenGL
@@ -127,7 +131,7 @@ bool initGL()
 
     // Activate Z-Buffer
     glEnable(GL_DEPTH_TEST);
-
+    //*glPolygonMode(GL_FRONT_AND_BACK,GL_LINE);
 
     // Lighting basic configuration and activation
     const GLfloat light_ambient[] = { 0.3f, 0.3f, 0.3f, 1.0f };
@@ -250,6 +254,131 @@ void updateRegard(float& angleVert, float& angleHor, Vector& vec, float mouseSpe
     SetCursorPos(600, 300);
 }
 
+void creatTexture(void)
+{
+    char* img[7];
+    img[0] = "skybox/back.jpg";
+    img[1] = "skybox/front.jpg";
+    img[2] = "skybox/bottom.jpg";
+    img[3] = "skybox/top.jpg";
+    img[4] = "skybox/left.jpg";
+    img[5] = "skybox/right.jpg";
+    img[6] = "sol.jpg";
+
+    int i = 1;
+
+    for (i = 0; i <= 6; ++i)
+    {
+        SDL_Surface* imgsurf = IMG_Load(img[i]);
+        if (imgsurf == NULL) {
+            printf("Failed to load texture image!\n");
+        }
+        int mode;
+        if (imgsurf->format->BytesPerPixel == 3) { // RGB 24bit
+            mode = GL_RGB;
+        }
+        else if (imgsurf->format->BytesPerPixel == 4) { // RGBA 32bit
+            mode = GL_RGBA;
+        }
+        else {
+            SDL_FreeSurface(imgsurf);
+            return;
+        }
+        glGenTextures(1, &TexIDSkyBox[i]);
+        glBindTexture(GL_TEXTURE_2D, TexIDSkyBox[i]);
+        glTexImage2D(GL_TEXTURE_2D, 0, mode, imgsurf->w, imgsurf->h, 0, mode, GL_UNSIGNED_BYTE, imgsurf->pixels);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, 0x812F);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, 0x812F);
+        SDL_FreeSurface(imgsurf);
+    }
+}
+
+void SkyBox_Draw(float x, float y, float z, float width, float height, float length)
+{
+    x = x - width / 2;  // Calcul l'emplacement d'un coin du cube
+    y = y - height / 2;
+    z = z - length / 2;
+    glPushMatrix();
+    //glDisable(GL_DEPTH_TEST);
+
+    //GLint OldCullFaceMode;
+    //glGetIntegerv(GL_CULL_FACE_MODE, &OldCullFaceMode);
+    //GLint OldDepthFuncMode;
+    //glGetIntegerv(GL_DEPTH_FUNC, &OldDepthFuncMode);
+
+    //glCullFace(GL_FRONT);
+    //glDepthFunc(GL_LEQUAL);
+    glEnable(GL_TEXTURE_2D);
+
+    glDepthMask(GL_FALSE);
+
+    glBindTexture(GL_TEXTURE_2D, TexIDSkyBox[0]);
+    glBegin(GL_TRIANGLE_STRIP);
+    glColor4f(1, 1, 1, 0);
+    glTexCoord2f(0.0f, 0.0f); glVertex3f(x, y, z);
+    glTexCoord2f(1.0f, 0.0f); glVertex3f(x + width, y, z);
+    glTexCoord2f(0.0f, 1.0f); glVertex3f(x, y + height, z);
+    glTexCoord2f(1.0f, 1.0f); glVertex3f(x + width, y + height, z);
+    glEnd();
+
+    glBindTexture(GL_TEXTURE_2D, TexIDSkyBox[1]);
+    glBegin(GL_TRIANGLE_STRIP);
+    glColor4f(1, 1, 1, 0);
+    glTexCoord2f(1.0f, 0.0f); glVertex3f(x, y, z + length);
+    glTexCoord2f(1.0f, 1.0f); glVertex3f(x, y + height, z + length);
+    glTexCoord2f(0.0f, 0.0f); glVertex3f(x + width, y, z + length);
+    glTexCoord2f(0.0f, 1.0f); glVertex3f(x + width, y + height, z + length);
+    glEnd();
+
+    glBindTexture(GL_TEXTURE_2D, TexIDSkyBox[2]);
+    glBegin(GL_TRIANGLE_STRIP);
+    glColor4f(1, 1, 1, 0);
+    glTexCoord2f(1.0f, 0.0f); glVertex3f(x, y, z);
+    glTexCoord2f(1.0f, 1.0f); glVertex3f(x, y, z + length);
+    glTexCoord2f(0.0f, 0.0f); glVertex3f(x + width, y, z);
+    glTexCoord2f(0.0f, 1.0f); glVertex3f(x + width, y, z + length);
+    glEnd();
+
+    glBindTexture(GL_TEXTURE_2D, TexIDSkyBox[3]);
+    glBegin(GL_TRIANGLE_STRIP);
+    glColor4f(1, 1, 1, 0);
+    glTexCoord2f(1.0f, 1.0f); glVertex3f(x, y + height, z);
+    glTexCoord2f(0.0f, 1.0f); glVertex3f(x + width, y + height, z);
+    glTexCoord2f(1.0f, 0.0f); glVertex3f(x, y + height, z + length);
+    glTexCoord2f(0.0f, 0.0f); glVertex3f(x + width, y + height, z + length);
+    glEnd();
+
+
+    glBindTexture(GL_TEXTURE_2D, TexIDSkyBox[5]);
+    glBegin(GL_TRIANGLE_STRIP);
+    glColor4f(1, 1, 1, 0);
+    glTexCoord2f(1.0f, 0.0f); glVertex3f(x, y, z);
+    glTexCoord2f(1.0f, 1.0f); glVertex3f(x, y + height, z);
+    glTexCoord2f(0.0f, 0.0f); glVertex3f(x, y, z + length);
+    glTexCoord2f(0.0f, 1.0f); glVertex3f(x, y + height, z + length);
+    glEnd();
+
+    glBindTexture(GL_TEXTURE_2D, TexIDSkyBox[4]);
+    glBegin(GL_TRIANGLE_STRIP);
+    glColor4f(1, 1, 1, 0);
+    glTexCoord2f(0.0f, 0.0f); glVertex3f(x + width, y, z);
+    glTexCoord2f(1.0f, 0.0f); glVertex3f(x + width, y, z + length);
+    glTexCoord2f(0.0f, 1.0f); glVertex3f(x + width, y + height, z);
+    glTexCoord2f(1.0f, 1.0f); glVertex3f(x + width, y + height, z + length);
+    glEnd();
+
+    glDepthMask(GL_TRUE);
+
+    //glCullFace(OldCullFaceMode);
+    //glDepthFunc(OldDepthFuncMode);
+    //glEnable(GL_DEPTH_TEST);
+    glPopMatrix();
+
+    glDisable(GL_TEXTURE_2D);
+}
+
 /***************************************************************************/
 /* MAIN Function                                                           */
 /***************************************************************************/
@@ -299,42 +428,9 @@ int main(int argc, char* args[])
         // Camera position
         Point camera_position(0, 0.0, 5.0);
 
-        // Texture //////////////////////////////////////////////////////////
-        GLuint textureid_1;
-        // Le fichier devant servir de texture. A mettre dans le dossier du projet
-        SDL_Surface* imgsurf = IMG_Load("earth_texture.jpg");
-        if (imgsurf == NULL) {
-            printf("Failed to load texture image!\n");
-        }
-        // work out what format to tell glTexImage2D to use...
-        int mode;
-        if (imgsurf->format->BytesPerPixel == 3) { // RGB 24bit
-            mode = GL_RGB;
-        }
-        else if (imgsurf->format->BytesPerPixel == 4) { // RGBA 32bit
-            mode = GL_RGBA;
-        }
-        else {
-            SDL_FreeSurface(imgsurf);
-            return 0;
-        }
-        // create one texture name
-        glGenTextures(1, &textureid_1);
-
-        // tell opengl to use the generated texture name
-        glBindTexture(GL_TEXTURE_2D, textureid_1);
-
-        // this reads from the sdl imgsurf and puts it into an opengl texture
-        glTexImage2D(GL_TEXTURE_2D, 0, mode, imgsurf->w, imgsurf->h, 0, mode, GL_UNSIGNED_BYTE, imgsurf->pixels);
-
-        // these affect how this texture is drawn later on...
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-
-        // clean up
-        SDL_FreeSurface(imgsurf);
-
-        // Texture //////////////////////////////////////////////////////////
+        // Textures
+        creatTexture();
+        
 
         // The forms to render
         Form* forms_list[MAX_FORMS_NUMBER];
@@ -344,25 +440,36 @@ int main(int argc, char* args[])
             forms_list[i] = NULL;
         }
 
-        Sphere* s1 = NULL;
-        s1 = new Sphere(0.1, Point(1, 0, 0), RED);
+        /*Sphere* s1 = NULL;
+        s1 = new Sphere(0.1, Point(1, 0, 0), WHITE);
         forms_list[number_of_forms] = s1;
         number_of_forms++;
-        s1 = new Sphere(0.1, Point(1, 1, 0), GREEN);
+        s1->setTexture(TexIDSkyBox[6]);
+        s1 = new Sphere(0.1, Point(1, 1, 0), WHITE);
         forms_list[number_of_forms] = s1;
         number_of_forms++;
-        s1 = new Sphere(0.1, Point(0, 1, 0), BLUE);
+        s1->setTexture(TexIDSkyBox[6]);
+        s1 = new Sphere(0.1, Point(0, 1, 0), WHITE);
         forms_list[number_of_forms] = s1;
         number_of_forms++;
+        s1->setTexture(TexIDSkyBox[6]);
         s1 = new Sphere(0.1, Point(0, -1, 0), WHITE);
         forms_list[number_of_forms] = s1;
         number_of_forms++;
-        s1 = new Sphere(0.1, Point(0, 0, 2), YELLOW);
+        s1->setTexture(TexIDSkyBox[6]);
+        s1 = new Sphere(0.1, Point(0, 0, 2), WHITE);
         forms_list[number_of_forms] = s1;
         number_of_forms++;
+        s1->setTexture(TexIDSkyBox[6]);*/
         /*s1 = new Sphere(0.1, Point(0, 0, -2), ORANGE);
         forms_list[number_of_forms] = s1;
         number_of_forms++;*/
+
+        Wall* bottom = NULL;
+        bottom = new Wall(Vector(1, 0, 0), Vector(0, 0, 1), Point(-50, -2, -50), 100, 100, WHITE);
+        bottom->setTexture(TexIDSkyBox[6]);
+        forms_list[number_of_forms] = bottom;
+        number_of_forms++;
 
         Target* t = NULL;
         t = new Target(1);
@@ -443,7 +550,7 @@ int main(int argc, char* args[])
 
             // Render the scene
             render(forms_list, regard);
-
+            SkyBox_Draw(-0, -0, -0, 100, 100, 100);
             // Update window screen
             SDL_GL_SwapWindow(gWindow);
         }
